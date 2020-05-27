@@ -46,30 +46,27 @@ func isBalanced() bool {
 	var s fixedStack
 	var result bool
 	symbols := make(map[string]string)
-	symbols["{"] = "}"
-	symbols["["] = "]"
-	symbols["("] = ")"
+	symbols["}"] = "{"
+	symbols["]"] = "["
+	symbols[")"] = "("
 
 	for scanner.Scan() {
 		item := scanner.Text()
-		if item == "" {
-			break
-		}
 		val, ok := symbols[item]
+		fmt.Printf("%v is val\n", val)
 		if ok {
-			if s.isEmpty() {
+			tmp := s.pop()
+			if tmp != val {
+				fmt.Printf("comparing %v and %v ====== currrent stack looks like: %v\n", tmp, val, &s.entries)
 				result = false
 			} else {
-				tmp := s.pop()
-				if tmp == val {
-					result = true
-				}
+				result = true
 			}
 		} else {
 			s.push(item)
 		}
-		if s.isEmpty() {
-			return result
+		if !s.isEmpty() {
+			result = false
 		}
 	}
 	return result
