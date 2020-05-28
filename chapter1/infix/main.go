@@ -52,40 +52,38 @@ func (s *Stack) isFull() bool {
 
 func main() {
 	//example := "1 + 2 ) * 3 - 4 ) * 5 - 6 ) ) )"
-	var input [16]string
-	input[0] = "1"
-	input[1] = "+"
-	input[2] = "2"
-	input[3] = ")"
-	input[4] = "*"
-	input[5] = "3"
-	input[6] = "-"
-	input[7] = "4"
-	input[8] = ")"
-	input[9] = "*"
-	input[10] = "5"
-	input[11] = "-"
-	input[12] = "6"
-	input[13] = ")"
-	input[14] = ")"
-	input[15] = ")"
+	var input []string
+	input = append(input, "1")
+	input = append(input, "+")
+	input = append(input, "2")
+	input = append(input, ")")
+	input = append(input, "*")
+	input = append(input, "3")
+	input = append(input, "-")
+	input = append(input, "4")
+	input = append(input, ")")
+	input = append(input, "*")
+	input = append(input, "5")
+	input = append(input, "-")
+	input = append(input, "6")
+	input = append(input, ")")
+	input = append(input, ")")
+	input = append(input, ")")
 	fmt.Println(getInfix(input))
 }
 
-func getInfix(input [16]string) string {
+func getInfix(input []string) string {
 	var operands *Stack = new(Stack)
 	var operators *Stack = new(Stack)
 	for _, item := range input {
 		if item == "(" {
 		} else if item == "+" || item == "-" || item == "/" || item == "*" {
-			fmt.Println("pushed " + item)
 			operators.push(item)
 		} else if item == ")" {
-			fmt.Println("popping paren " + item)
 			operator := operators.pop()
 			val2 := operands.pop()
 			val1 := operands.pop()
-			subExpr := "( " + val1 + " " + operator + val2 + " )"
+			subExpr := "( " + val1 + " " + operator + " " + val2 + " )"
 			operands.push(subExpr)
 		} else {
 			operands.push(item)
