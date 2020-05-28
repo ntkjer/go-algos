@@ -12,7 +12,7 @@ type fixedStack struct {
 }
 
 func newStack(items []interface{}) *fixedStack {
-	s := fixedStack{entries: items, N: len(items)}
+	s := fixedStack{entries: items, N: len(items) - 1}
 	s.entries = make([]interface{}, s.N)
 	return &s
 }
@@ -37,6 +37,11 @@ func (s *fixedStack) pop() interface{} {
 	return result
 }
 
+func (s *fixedStack) peek() interface{} {
+	return s.entries[s.N-1]
+
+}
+
 //Technically this will always be true since N== len(entries)
 //Also this doesnt really make sense in the context of slices as the internal collection of items, since they grow automatically.
 func (s *fixedStack) isFull() bool {
@@ -51,6 +56,7 @@ func main() {
 		item := scanner.Text()
 		if item != "-" {
 			s.push(item)
+			fmt.Println(s.peek(), "its working")
 		} else if !s.isEmpty() {
 			fmt.Println(s.pop(), " ")
 		}

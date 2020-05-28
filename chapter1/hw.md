@@ -16,5 +16,16 @@ it checks for powers of two and pushes on stack to calculate binary representati
 * enqueueing every single item from the stack as its popped means we append popped items that were in order to the back of the queue. This will *reverse* the original q input order. 
 ## 1.3.7
 implement peek in the stack interface
-
+```
+stacks
+├── dynamic
+│   ├── main.go
+│   └── tobe.txt
+└── fixedcap
+    ├── main.go
+        └── tobe.txt
+```
+## 1.3.8
+it was the - the best - of times - - - it was - the - -
+>>it
 
