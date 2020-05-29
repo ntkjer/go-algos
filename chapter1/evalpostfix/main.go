@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"time"
 )
 
 type Stack struct {
@@ -64,18 +63,13 @@ func evalPostfix() string {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		item := scanner.Text()
+		if item == "" {
+			break
+		}
 		if item == "+" || item == "-" || item == "/" || item == "*" {
-			fmt.Println("pushing")
-			fmt.Println(item)
-
-			time.Sleep(2 * time.Second)
+			fmt.Println("pushing operator")
 			operators.push(item)
-		} else if operands.size() < 2 {
-			fmt.Println("size < 2")
-			fmt.Println(item)
-			operands.push(item)
-		} else {
-			fmt.Println("popping here")
+			fmt.Println("popping")
 			operator := operators.pop()
 			val2, _ := strconv.Atoi(operands.pop())
 			val1, _ := strconv.Atoi(operands.pop())
@@ -90,6 +84,8 @@ func evalPostfix() string {
 				result = strconv.Itoa(val1 * val2)
 			}
 			operands.push(result)
+		} else {
+			operands.push(item)
 		}
 	}
 	return operands.pop()

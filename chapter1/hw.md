@@ -28,4 +28,19 @@ stacks
 ## 1.3.8
 it was the - the best - of times - - - it was - the - -
 >>it
+## 1.3.9
+infix 
+## 1.3.10
+eval postfix written
+## 1.3.11 
+Done
+## 1.3.12
+
+## 1.3.13
+b c and d are impossible since a dequeue would mean that we remove the first item queued. therefore `n < N `Item where n is the smaller of numbers from 0-9. Since items are inserted in ascending order, we cannot break the ascsending queue. 
+
+## 1.3.14
+wont work with constant var size for arrays as the size is inherently part of the type in go.
+
+## 1.3.15
 
