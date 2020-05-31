@@ -13,36 +13,41 @@ type node struct {
 	next *node
 }
 
-type LinkedList struct {
-	first *node
-	N     int
+type Queue struct {
+	last *node
+	N    int
 }
 
 func (n node) getItem() interface{} {
 	return n.Item
 }
 
-func (l *LinkedList) isEmpty() bool {
-	return l.first == nil
+func (l *Queue) isEmpty() bool {
+	return l.last == nil
 }
 
-func (l *LinkedList) size() int {
+func (l *Queue) size() int {
 	return l.N
 }
 
-func (l *LinkedList) insertFirst(item interface{}) {
-	var first *node = new(node)
-	oldfirst := l.first
-	first.Item = item
-	first.next = oldfirst
-	l.first = first
-	l.N++
+func (q *Queue) enqueue(item interface{}) {
+	var curr *node = new(node)
+	if q.N == 0 {
+		curr.next = curr
+	} else if q.N > 0 {
+		curr.next = q.last.next
+		q.last.next = curr
+	}
+	curr.Item = item
+	q.last = curr
+	q.N++
 }
 
-func (l *LinkedList) append(item interface{}) {
-	for x := l.first; x != nil; x = x.next {
+func (l *Queue) append(item interface{}) {
+	for x := l.last; x != nil; x = x.next {
 		if x.next == nil {
 			var last *node = new(node)
+			last.Item = item
 			last.next = nil
 			x.next = last
 			break
@@ -50,10 +55,10 @@ func (l *LinkedList) append(item interface{}) {
 	}
 }
 
-func (l *LinkedList) find(key interface{}) int {
+func (l *Queue) find(key interface{}) int {
 	result, count := -1, 0
 	if !l.isEmpty() {
-		for x := l.first; x != nil; x = x.next {
+		for x := l.last; x != nil; x = x.next {
 			fmt.Println(reflect.TypeOf(key), reflect.TypeOf(x.Item))
 			if x.Item == key {
 				fmt.Println("x.item == key")
@@ -66,7 +71,7 @@ func (l *LinkedList) find(key interface{}) int {
 	return result
 }
 
-func (l *LinkedList) remove(key interface{}) {
+func (l *Queue) remove(key interface{}) {
 	index := l.find(key)
 	if index == -1 {
 		return
@@ -75,31 +80,7 @@ func (l *LinkedList) remove(key interface{}) {
 
 }
 
-func reverse(x *node) *node {
-	var first *node = x
-	var reverse *node = nil
-	for first != nil {
-		second := first.next
-		first.next = reverse
-		reverse = first
-		first = second
-	}
-	return reverse
-}
-
-func rReverse(first *node) *node {
-	if first == nil {
-		return nil
-	}
-	if first.next == nil {
-		return first
-	}
-	second := first.next
-	rest := rReverse(second)
-	return rest
-}
-
-func (l *LinkedList) max(x *node) int {
+func (l *Queue) max(x *node) int {
 	max := -1
 	for ; x != nil; x = x.next {
 		tmp := x.Item.(int)
@@ -110,7 +91,7 @@ func (l *LinkedList) max(x *node) int {
 	return max
 }
 
-func (l *LinkedList) recursiveMax(x *node, max int) int {
+func (l *Queue) recursiveMax(x *node, max int) int {
 	if x == nil {
 		return max
 	}
@@ -121,12 +102,12 @@ func (l *LinkedList) recursiveMax(x *node, max int) int {
 	return l.recursiveMax(x.next, max)
 }
 
-func (l *LinkedList) deleteLast() {
+func (l *Queue) deleteLast() {
 	if !l.isEmpty() {
 		if l.size() == 1 {
-			l.first = nil
+			l.last = nil
 		} else {
-			curr := l.first
+			curr := l.last
 			for i := 1; i < l.size()-1; i++ {
 				curr = curr.next
 			}
@@ -136,12 +117,12 @@ func (l *LinkedList) deleteLast() {
 	}
 }
 
-func (l *LinkedList) addAfter(k int, item interface{}) {
+func (l *Queue) addAfter(k int, item interface{}) {
 	if k > l.size() || (l.isEmpty() && k > 0) {
 		panic("index too high")
 	} else {
 		i := 0
-		for curr := l.first; curr != nil; curr = curr.next {
+		for curr := l.last; curr != nil; curr = curr.next {
 			if i == k {
 				var x *node = new(node)
 				x.Item = item
@@ -159,13 +140,13 @@ func (l *LinkedList) addAfter(k int, item interface{}) {
 	}
 }
 
-func (l *LinkedList) deleteAfter(k int) bool {
+func (l *Queue) deleteAfter(k int) bool {
 	var result bool
 	if k > l.size() {
 		fmt.Println("k >>>>")
 		result = false
 	} else {
-		curr := l.first
+		curr := l.last
 		for i := 0; i < k-2; i++ {
 			curr = curr.next
 		}
@@ -176,18 +157,20 @@ func (l *LinkedList) deleteAfter(k int) bool {
 	return result
 }
 
-func (l *LinkedList) printLinks() {
+func (l *Queue) printLinks() {
 	i := 0
-	for x := l.first; x != nil; x = x.next {
+	x := l.last
+	for i != l.N {
 		fmt.Println(x.Item, i)
+		x = x.next
 		i++
 	}
 }
 
-func (l *LinkedList) deleteFirst() interface{} {
+func (l *Queue) deletelast() interface{} {
 	var item interface{}
-	item = l.first.Item
-	l.first = l.first.next
+	item = l.last.Item
+	l.last = l.last.next
 	l.N--
 	return item
 }
@@ -197,9 +180,9 @@ func main() {
 }
 
 func dynamicCheck() bool {
-	var l *LinkedList = new(LinkedList)
+	var l *Queue = new(Queue)
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("LinkedList ok")
+	fmt.Println("Queue ok")
 	for scanner.Scan() {
 		item := scanner.Text()
 		if item == "" {
@@ -208,9 +191,9 @@ func dynamicCheck() bool {
 			fmt.Println("calling delete last, size is: ", l.size())
 			l.deleteLast()
 			fmt.Println("called delete last, size is now: ", l.size())
-			fmt.Println("head is at -> ", l.first)
+			fmt.Println("head is at -> ", l.last)
 		} else if item == "." {
-			fmt.Printf("deleted first: %v <-- length: %v\n", l.deleteFirst(), l.size())
+			fmt.Printf("deleted last: %v <-- length: %v\n", l.deletelast(), l.size())
 		} else if item == "da" {
 			fmt.Println(l.deleteAfter(l.size()/2 - 1))
 			l.printLinks()
@@ -222,32 +205,28 @@ func dynamicCheck() bool {
 		} else if item == "pl" {
 			l.printLinks()
 		} else if item == "max" {
-			fmt.Println(l.max(l.first))
+			fmt.Println(l.max(l.last))
 		} else if item == "rmax" {
 			max := 0
-			fmt.Println(l.recursiveMax(l.first, max))
-		} else if item == "reverse" {
-			l.first = reverse(l.first)
-		} else if item == "rreverse" {
-			l.first = rReverse(l.first)
+			fmt.Println(l.recursiveMax(l.last, max))
 		} else {
 			num, _ := strconv.Atoi(item)
-			l.insertFirst(num)
-			//l.insertFirst(item)
+			l.enqueue(num)
+			//l.enqueue(item)
 		}
 	}
 	return l.isEmpty() == true
 }
 
 func initCheck() bool {
-	var first *node = new(node)
+	var last *node = new(node)
 	var second *node = new(node)
 	var third *node = new(node)
 	var fourth *node = new(node)
-	var s *LinkedList = new(LinkedList)
+	var s *Queue = new(Queue)
 	fmt.Println(s.isEmpty())
-	first.Item = "to"
-	first.next = second
+	last.Item = "to"
+	last.next = second
 	fmt.Println("here")
 	second.Item = "be"
 	second.next = third
@@ -255,15 +234,15 @@ func initCheck() bool {
 	third.next = fourth
 	fourth.Item = "that"
 	fmt.Println("there")
-	s.first = first
+	s.last = last
 	numItems := 4
 	s.N = numItems
 	i := 0
 	for i < numItems {
 
 		fmt.Println("everywhere")
-		if s.first != nil {
-			fmt.Printf("%v : <-----, items remaining: %d", s.deleteFirst(), s.N)
+		if s.last != nil {
+			fmt.Printf("%v : <-----, items remaining: %d", s.deletelast(), s.N)
 		}
 		i++
 	}

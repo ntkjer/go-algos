@@ -43,4 +43,55 @@ b c and d are impossible since a dequeue would mean that we remove the first ite
 wont work with constant var size for arrays as the size is inherently part of the type in go.
 
 ## 1.3.15
+## 1.3.16
+## 1.3.17
 
+# LinkedList Exercises
+
+## 1.3.18
+x.next = x.next.next 
+repoints the next item to the next of the x.next
+deletes the item from the list
+
+## 1.3.19
+traverse the links until the last node
+reassign the next of x.next to be nil
+```
+x := s.first
+if !s.isEmpty() {
+    if s.size() == 1 { 
+        first = nil
+        break
+        } else {
+            for x != nil {
+                if x.next.next == nil {
+                    x.next.next = nil
+                }
+            }
+        }
+        s.size--
+}
+```
+implemented in linkedlist/main.go
+## 1.3.20
+in linkedlist/main.go
+## 1.3.21 
+in linkedlist/main.go
+## 1.3.22
+inserts node t immediately after node x
+## 1.3.23
+we removed the link from node x to its next node
+this results in t referring to itself as its next node 
+## 1.3.24
+in linkedlist/main.go
+## 1.3.25 
+in linkedlist/main.go
+## 1.3.26
+in linkedlist/main.go
+## 1.3.27 
+in linkedlist/main.go
+## 1.3.28 
+in linkedlist/main.go
+## 1.3.29
+in circular-linkedlist/main.go
+## 1.3.30
