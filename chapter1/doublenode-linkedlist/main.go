@@ -67,7 +67,7 @@ func (l *LinkedList) insertBefore(k int, item interface{}) {
 	var curr *node = new(node)
 	curr.Item = item
 
-	if k > l.size() {
+	if k > l.size() || l.isEmpty() {
 		panic("k > size of *Linkedlist")
 	}
 
