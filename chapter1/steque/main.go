@@ -47,22 +47,48 @@ func (s *Stequeue) pop() interface{} {
 	result := s.first
 	if s.size() > 1 {
 		s.first = s.first.next
+		s.first.prev = nil
 	} else {
 		s.first = nil
+		s.last = s.first
 	}
-	s.first.prev = nil
 	s.N--
 	return result
+}
+
+func (s *Stequeue) dequeue() interface{} {
+	if s.isEmpty() {
+		return nil
+	}
+	result := s.last
+	if s.size() > 1 {
+		s.last = s.last.prev
+		s.last.next = nil
+	} else {
+		s.last = nil
+		s.first = s.last
+	}
+	s.N--
+	return result
+}
+
+func (s *Stequeue) peekFirst() interface{} {
+	return s.first.item
+}
+
+func (s *Stequeue) peekLast() interface{} {
+	return s.last.item
 }
 
 func (s *Stequeue) enqueue(item interface{}) {
 	if s.N == 0 {
 		s.push(item)
 	} else {
-		var newFirst *node = new(node)
-		newFirst.item = item
-		newFirst.next = s.first
-		s.first = newFirst
+		var newLast *node = new(node)
+		newLast.item = item
+		newLast.prev = s.last
+		s.last.next = newLast
+		s.last = newLast
 		s.N++
 	}
 }
@@ -83,7 +109,13 @@ func main() {
 		} else if input == "pl" {
 			s.printLinks()
 		} else if input == "eq" {
-			s.enqueue("enqueue")
+			s.enqueue("69")
+		} else if input == "dq" {
+			fmt.Println(s.dequeue())
+		} else if input == "peeklast" {
+			fmt.Println(s.peekLast())
+		} else if input == "peekfirst" {
+			fmt.Println(s.peekFirst())
 		} else {
 			s.push(input)
 		}
