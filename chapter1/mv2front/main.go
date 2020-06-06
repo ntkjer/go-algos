@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"reflect"
 	"strconv"
 )
 
@@ -50,11 +49,30 @@ func (l *LinkedList) append(item interface{}) {
 	}
 }
 
+func (l *LinkedList) MoveToFront(key interface{}) {
+	//move most recently accessed items to front of the list
+	if !l.isEmpty() {
+		fmt.Println("finding key")
+		index := l.find(key)
+		fmt.Println("key is ", index)
+		if index == -1 {
+			fmt.Println("not found and inserting ")
+			l.insertFirst(key)
+		} else {
+			fmt.Println("found and attempting to insert at ", index)
+			accessedItem := l.removeN(index)
+			l.insertFirst(accessedItem)
+			fmt.Printf("inserted %v at %d \n", key, index)
+		}
+	} else {
+		l.insertFirst(key)
+	}
+}
+
 func (l *LinkedList) find(key interface{}) int {
 	result, count := -1, 0
 	if !l.isEmpty() {
 		for x := l.first; x != nil; x = x.next {
-			fmt.Println(reflect.TypeOf(key), reflect.TypeOf(x.Item))
 			if x.Item == key {
 				fmt.Println("x.item == key")
 				result = count
@@ -72,7 +90,10 @@ func (l *LinkedList) remove(key interface{}) {
 		return
 	}
 	l.deleteAfter(index)
+}
 
+func (l *LinkedList) removeN(index int) interface{} {
+	return l.delete(index)
 }
 
 func reverse(x *node) *node {
@@ -146,17 +167,30 @@ func (l *LinkedList) addAfter(k int, item interface{}) {
 				var x *node = new(node)
 				x.Item = item
 				x.next = curr.next
-				fmt.Println(curr.next.Item, x.next.Item, x.Item)
 				curr.next = x
-				fmt.Println("========================")
-				fmt.Println("success!")
 				l.N++
 				break
 			}
 			i++
-
 		}
 	}
+}
+
+//deletes kth element and returns the underlying val of that node
+func (l *LinkedList) delete(k int) interface{} {
+	var result *node = new(node)
+	if k > l.size() {
+		result = nil
+	} else {
+		curr := l.first
+		for i := 0; i < k-1; i++ {
+			curr = curr.next
+		}
+		result = curr.next
+		curr.next = curr.next.next
+		l.N--
+	}
+	return result.Item
 }
 
 func (l *LinkedList) deleteAfter(k int) bool {
@@ -178,6 +212,7 @@ func (l *LinkedList) deleteAfter(k int) bool {
 
 func (l *LinkedList) printLinks() {
 	i := 0
+	fmt.Println("attemping to print, size: ", l.size())
 	for x := l.first; x != nil; x = x.next {
 		fmt.Println(x.Item, i)
 		i++
@@ -193,7 +228,20 @@ func (l *LinkedList) deleteFirst() interface{} {
 }
 
 func main() {
-	dynamicCheck()
+	mv2frnt()
+}
+
+func mv2frnt() {
+	var l *LinkedList = new(LinkedList)
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		item := scanner.Text()
+		if item == "print" {
+			l.printLinks()
+		} else {
+			l.MoveToFront(item)
+		}
+	}
 }
 
 func dynamicCheck() bool {
