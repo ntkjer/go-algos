@@ -47,6 +47,9 @@ func (s *fixedStack) isFull() bool {
 	return s.size() == s.N
 }
 
+func CopyStack(toCopy *fixedStack) *fixedStack {
+}
+
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	var s fixedStack

@@ -3,7 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
+	"strings"
 )
 
 type node struct {
@@ -43,12 +46,46 @@ func (q *Queue) enqueue(val interface{}) {
 	if q.isEmpty() {
 		q.first = last
 	} else {
-		fmt.Println(oldlast)
 		oldlast.next = q.last
-		fmt.Println("there")
 	}
 	q.N++
-	fmt.Println("enqueue")
+}
+
+func (q *Queue) listFiles(f string, depth int) {
+	fi, err := os.Stat(f)
+	if err != nil {
+		fmt.Println(err)
+	}
+	switch mode := fi.Mode(); {
+	case mode.IsDir():
+		files, err := ioutil.ReadDir(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+		for _, currf := range files {
+			q.listFiles(f+"/"+currf.Name(), depth+1)
+		}
+	case mode.IsRegular():
+		q.enqueueFile(f, depth)
+	}
+}
+
+func (q *Queue) enqueueFile(f string, depth int) {
+	var result strings.Builder
+	for i := 0; i < depth; i++ {
+		result.WriteString("    ")
+	}
+	result.WriteString(f)
+	q.enqueue(result.String())
+}
+
+func testFileQueue() {
+	var q *Queue = new(Queue)
+	path := os.Args[1]
+	q.listFiles(path, 0)
+	for x := q.first; x != nil; x = x.next {
+		fmt.Println(x.item)
+	}
 }
 
 func (q *Queue) dequeue() interface{} {
@@ -84,5 +121,5 @@ func dynamicCheck() bool {
 }
 
 func main() {
-	dynamicCheck()
+	testFileQueue()
 }
