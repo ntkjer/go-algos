@@ -8,13 +8,11 @@ import (
 
 type node struct {
 	item interface{}
-	next *node
 }
 
 type Queue struct {
-	first *node
-	last  *node
-	N     int
+	entries []interface{}
+	N       int
 }
 
 func (q *Queue) isEmpty() bool {
@@ -26,15 +24,10 @@ func (q *Queue) size() int {
 }
 
 func (q *Queue) enqueue(val interface{}) {
-	var last *node = new(node)
-	oldlast := q.last
-	last.item = val
-	last.next = nil
-	q.last = last
 	if q.isEmpty() {
-		q.first = last
+		q.entries[0] = val
 	} else {
-		oldlast.next = last
+
 	}
 	q.N++
 }
@@ -45,26 +38,18 @@ func (q *Queue) dequeue() interface{} {
 	q.first = q.first.next
 	if q.isEmpty() {
 		q.last = nil
+		return nil
 	}
 	q.N--
 	return oldfirst.item
 }
 
-func (q *Queue) josephus(n int, m int) {
-	for i := 0; i < n; i++ {
-		q.enqueue(i)
+func (q *Queue) PrintLinks() {
+	count := 0
+	for x := q.first; count < q.size(); x = x.next {
+		fmt.Println(x.item)
+		count++
 	}
-	for n > 0 {
-		for i := 1; i < m; i++ {
-			q.enqueue(q.dequeue())
-		}
-		fmt.Println(q.dequeue())
-		n--
-	}
-}
-
-func isPowerOfTwo(x int) bool {
-	return (x != 0) && (x&(x-1)) == 0
 }
 
 func dynamicCheck() bool {
@@ -77,10 +62,10 @@ func dynamicCheck() bool {
 			break
 		} else if item == "." {
 			fmt.Printf("dequeue: %v <-- length: %v\n", x.dequeue(), x.size())
+		} else if item == "print" {
+			x.PrintLinks()
 		} else {
-			var n *node = new(node)
-			n.item = item
-			x.enqueue(n)
+			x.enqueue(item)
 		}
 
 	}
@@ -89,6 +74,5 @@ func dynamicCheck() bool {
 }
 
 func main() {
-	var x *Queue = new(Queue)
-	x.josephus(7, 2)
+	dynamicCheck()
 }
