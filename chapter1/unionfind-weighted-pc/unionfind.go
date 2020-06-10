@@ -9,9 +9,14 @@ type UF struct {
 }
 
 func NewUF(n int) *UF {
-	uf := UF{count: n}
+	uf := UF{
+		count: n,
+		size:  make([]int, n),
+		id:    make([]int, n),
+	}
 	for i := 0; i < n; i++ {
 		uf.id[i] = i
+		uf.size[i] = 1
 	}
 	return &uf
 }
@@ -44,10 +49,11 @@ func (uf *UF) Union(p, q int) {
 }
 
 func (uf *UF) Find(p int) int {
-	for p != uf.id[p] {
-		p = uf.id[p]
+	if p == uf.id[p] {
+		return p
 	}
-	return p
+	uf.id[p] = uf.Find(uf.id[p])
+	return uf.id[p]
 }
 
 func main() {
