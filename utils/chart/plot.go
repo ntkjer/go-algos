@@ -29,11 +29,6 @@ func (p *Plot) Output(in string) {
 	p.Graph.Render(chart.PNG, f)
 }
 
-func (p *Plot) Init() {
-	p.Graph.Chart.Series.chart.ContinuousSeries.XValues = p.Graph.X
-	p.Graph.Chart.Series.chart.ContinuousSeries.YValues = p.Graph.Y
-}
-
 func NewPlot(xy *Coordinates) *Plot {
 	g := chart.Chart{
 		Series: []chart.Series{
@@ -45,6 +40,6 @@ func NewPlot(xy *Coordinates) *Plot {
 	}
 	var p *Plot = new(Plot)
 	p.Position = xy
-	p.Graph = g
-	return &p
+	p.Graph = &g
+	return p
 }
