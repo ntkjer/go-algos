@@ -1,4 +1,4 @@
-package insertion
+package shell
 
 import (
 	"fmt"
@@ -77,6 +77,7 @@ func (s Sorter) Sort(input []interface{}) {
 	for h >= 1 {
 		//h sort slice
 		for i := h; i < n; i++ {
+			// Inserts ith elem in i-h, i-2h, i-3h..
 			for j := i; j >= h && s.Less(input[j], input[j-h]); j -= h {
 				exchange(input, j, j-h)
 			}
