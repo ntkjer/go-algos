@@ -1,5 +1,6 @@
 package plot
 
+import "fmt"
 import "github.com/wcharczuk/go-chart"
 import "os"
 
@@ -16,7 +17,7 @@ func NewCoordinates(x, y []float64) *Coordinates {
 }
 
 type Plot struct {
-	Position *Coordinates
+	Position []*Coordinates
 	Graph    *chart.Chart
 }
 
@@ -26,20 +27,44 @@ func (p *Plot) Output(in string) {
 		panic(err)
 	}
 	defer f.Close()
+
 	p.Graph.Render(chart.PNG, f)
 }
 
-func NewPlot(xy *Coordinates) *Plot {
-	g := chart.Chart{
-		Series: []chart.Series{
-			chart.ContinuousSeries{
-				XValues: xy.X,
-				YValues: xy.Y,
-			},
-		},
-	}
+//func NewPlot(xy *Coordinates) *Plot {
+//	g := chart.Chart{
+//		Series: []chart.Series{
+//			chart.ContinuousSeries{
+//				XValues: xy.X,
+//				YValues: xy.Y,
+//			},
+//		},
+//	}
+//	var p *Plot = new(Plot)
+//	p.Position = xy
+//	p.Graph = &g
+//	return p
+//}
+
+func NewPlot(title string) *Plot {
+	var g *chart.Chart = new(chart.Chart)
+	g.Width, g.Height = chart.DefaultChartWidth, chart.DefaultChartHeight
 	var p *Plot = new(Plot)
-	p.Position = xy
-	p.Graph = &g
+	p.Graph = g
 	return p
+}
+
+func (p *Plot) Add(xy *Coordinates, algo string) {
+	var cs *chart.ContinuousSeries = new(chart.ContinuousSeries)
+	cs.XValues = xy.X
+	cs.YValues = xy.Y
+	cs.Name = algo
+	p.Graph.Series = append(p.Graph.Series, cs)
+	fmt.Println(len(p.Graph.Series))
+}
+
+func (p *Plot) AddLegend() {
+	p.Graph.Elements = []chart.Renderable{
+		chart.LegendLeft(p.Graph),
+	}
 }
