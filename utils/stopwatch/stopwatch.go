@@ -22,3 +22,7 @@ func (s *Stopwatch) Stop() {
 func (s *Stopwatch) ElapsedTime() time.Duration {
 	return s.elapsed
 }
+
+func (s *Stopwatch) ElapsedTimeSeconds() float64 {
+	return s.elapsed.Seconds()
+}
