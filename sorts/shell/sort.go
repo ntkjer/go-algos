@@ -80,8 +80,8 @@ func (s Sorter) Sort(input []interface{}) {
 			for j := i; j >= h && s.Less(input[j], input[j-h]); j -= h {
 				exchange(input, j, j-h)
 			}
-			h = h / 3
 		}
+		h = h / 3
 	}
 
 	s.sorted = true
