@@ -1,6 +1,5 @@
 package plot
 
-import "fmt"
 import "github.com/wcharczuk/go-chart"
 import "os"
 
@@ -31,21 +30,6 @@ func (p *Plot) Output(in string) {
 	p.Graph.Render(chart.PNG, f)
 }
 
-//func NewPlot(xy *Coordinates) *Plot {
-//	g := chart.Chart{
-//		Series: []chart.Series{
-//			chart.ContinuousSeries{
-//				XValues: xy.X,
-//				YValues: xy.Y,
-//			},
-//		},
-//	}
-//	var p *Plot = new(Plot)
-//	p.Position = xy
-//	p.Graph = &g
-//	return p
-//}
-
 func NewPlot(title string) *Plot {
 	var g *chart.Chart = new(chart.Chart)
 	g.Width, g.Height = chart.DefaultChartWidth, chart.DefaultChartHeight
@@ -60,11 +44,37 @@ func (p *Plot) Add(xy *Coordinates, algo string) {
 	cs.YValues = xy.Y
 	cs.Name = algo
 	p.Graph.Series = append(p.Graph.Series, cs)
-	fmt.Println(len(p.Graph.Series))
 }
 
 func (p *Plot) AddLegend() {
 	p.Graph.Elements = []chart.Renderable{
 		chart.LegendLeft(p.Graph),
 	}
+}
+
+func (p *Plot) DrawYAxis(xy *Coordinates) {
+	var cs *chart.ContinuousSeries = new(chart.ContinuousSeries)
+	cs.XValues = xy.X
+	//cs.YValues = xy.Y
+	zeroes := make([]float64, len(cs.YValues))
+	cs.YValues = zeroes
+	cs.Name = "y"
+	p.Graph.Series = append(p.Graph.Series, cs)
+	p.Graph.Series = append(p.Graph.Series, cs)
+}
+
+func (p *Plot) ChangeColor() {
+
+}
+
+func (p *Plot) RandomizeColor() {
+
+}
+
+func (p *Plot) SetXAxisTitle(input string) {
+
+}
+
+func (p *Plot) SetYAxisTitle(input string) {
+
 }

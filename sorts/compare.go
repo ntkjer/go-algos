@@ -15,7 +15,7 @@ import (
 	"github.com/ntkjer/sedgewick/utils/stopwatch"
 )
 
-const (
+var (
 	steps = 100
 )
 
@@ -50,7 +50,7 @@ func randomFloats(min, max float64, n int) []interface{} {
 func timedRandomInput(algo string, n, trials int) float64 {
 	total := 0.0
 	rand.Seed(time.Now().UnixNano())
-	input := randomFloats(0.0, 100.0, n)
+	input := randomFloats(0.0, float64(n), n)
 	for t := 0; t < trials; t++ {
 		total += timeTrial(algo, input)
 	}
@@ -63,6 +63,16 @@ func step(n int) []float64 {
 	for i := 0; i < len(res); i++ {
 		res[i] = total
 		total += float64(n) / steps
+	}
+	return res
+}
+
+func fstep(n float64) []float64 {
+	res := make([]float64, int(steps)+1)
+	total := 0.0
+	for i := 0; i < len(res); i++ {
+		res[i] = total
+		total += n / steps
 	}
 	return res
 }
@@ -100,8 +110,10 @@ func main() {
 	c1 := plot.NewCoordinates(xaxis, a)
 	p := plot.NewPlot("algo runtimes")
 	c2 := plot.NewCoordinates(xaxis, b)
+	cxy := plot.NewCoordinates(xaxis, fstep(float64(a[len(a-1)])))
 	p.Add(c1, algoA)
 	p.Add(c2, algoB)
+	p.DrawYAxis(cxy)
 	p.AddLegend()
 	p.Output("graph.png")
 
