@@ -15,6 +15,10 @@ import (
 	"github.com/ntkjer/sedgewick/utils/stopwatch"
 )
 
+const (
+	steps = 100
+)
+
 func timeTrial(algo string, input []interface{}) float64 {
 	var watch *stopwatch.Stopwatch = new(stopwatch.Stopwatch)
 	watch.Start()
@@ -46,7 +50,7 @@ func randomFloats(min, max float64, n int) []interface{} {
 func timedRandomInput(algo string, n, trials int) float64 {
 	total := 0.0
 	rand.Seed(time.Now().UnixNano())
-	input := randomFloats(0.0, 100.01, n)
+	input := randomFloats(0.0, 100.0, n)
 	for t := 0; t < trials; t++ {
 		total += timeTrial(algo, input)
 	}
@@ -54,13 +58,11 @@ func timedRandomInput(algo string, n, trials int) float64 {
 }
 
 func step(n int) []float64 {
-	steps := 10.0
 	res := make([]float64, int(steps)+1)
 	total := 0.0
 	for i := 0; i < len(res); i++ {
 		res[i] = total
 		total += float64(n) / steps
-		fmt.Println(total)
 	}
 	return res
 }
@@ -68,9 +70,7 @@ func step(n int) []float64 {
 func generatePlotPoints(algoA, algoB string, n, trials int) ([]float64, []float64, []float64) {
 	//for a large n, lets step the number into a slice of floats as our x axis
 	xaxis := step(n)
-	fmt.Println(xaxis)
-
-	aTimes, bTimes := make([]float64, n), make([]float64, n)
+	aTimes, bTimes := make([]float64, len(xaxis)), make([]float64, len(xaxis))
 
 	for i, num := range xaxis {
 		time1 := timedRandomInput(algoA, int(num), trials)
