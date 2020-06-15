@@ -1,4 +1,4 @@
-package shell
+package merge
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 
 type Sorter struct {
 	items  []interface{}
+	aux    []interface{}
 	sorted bool
 }
 
@@ -69,22 +70,44 @@ func (s Sorter) Show(input []interface{}) {
 
 //h value is defined as the h number of sorted subsequences for an input slice, with 4 as default.
 func (s Sorter) Sort(input []interface{}) {
-	n := len(input)
-	h := 1
-	for h < n/3 { // 1, 4, 13, 40, 121
-		h = 3*h + 1
+	aux := make([]interface{}, len(input))
+	s.aux = aux
+	s.sort(input, 0, len(input)-1)
+}
+
+func (s Sorter) sort(input []interface{}, lo, hi int) {
+	if hi <= lo {
+		return
 	}
-	for h >= 1 {
-		//h sort slice
-		for i := h; i < n; i++ {
-			// Inserts ith elem in i-h, i-2h, i-3h..
-			for j := i; j >= h && s.Less(input[j], input[j-h]); j -= h {
-				exchange(input, j, j-h)
-			}
+	mid := lo + (hi-lo)/2
+	s.sort(input, lo, mid)
+	s.sort(input, mid+1, hi)
+	s.merge(input, lo, mid, hi)
+}
+
+func (s Sorter) merge(input []interface{}, lo, mid, hi int) {
+
+	i, j := lo, mid+1
+
+	for k := lo; k <= hi; k++ {
+		s.aux[k] = input[k]
+	}
+
+	for k := lo; k <= hi; k++ {
+		if i > mid {
+			input[k] = s.aux[j]
+			j += 1
+		} else if j > hi {
+			input[k] = s.aux[i]
+			i += 1
+		} else if s.Less(s.aux[j], s.aux[i]) {
+			input[k] = s.aux[j]
+			j += 1
+		} else {
+			input[k] = s.aux[i]
+			i += 1
 		}
-		h = h / 3
 	}
-	s.sorted = true
 }
 
 func exchange(input []interface{}, i, j int) {

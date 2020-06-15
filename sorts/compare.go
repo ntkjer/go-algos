@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/ntkjer/sedgewick/sorts/insertion"
+	"github.com/ntkjer/sedgewick/sorts/merge"
 	"github.com/ntkjer/sedgewick/sorts/selection"
 	"github.com/ntkjer/sedgewick/sorts/shell"
 
@@ -31,6 +32,9 @@ func timeTrial(algo string, input []interface{}) float64 {
 	} else if algo == "shell" {
 		var s *shell.Sorter = new(shell.Sorter)
 		s.Sort(input)
+	} else if algo == "merge" {
+		var s *merge.Sorter = new(merge.Sorter)
+		s.Sort(input)
 	} else {
 		panic("not supported yet! please add your sort implementation.")
 	}
@@ -53,6 +57,7 @@ func timedRandomInput(algo string, n, trials int) float64 {
 	input := randomFloats(0.0, float64(n), n)
 	for t := 0; t < trials; t++ {
 		total += timeTrial(algo, input)
+		input = randomFloats(0.0, float64(n), n)
 	}
 	return total
 }
