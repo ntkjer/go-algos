@@ -62,7 +62,7 @@ func step(n int) []float64 {
 	total := 0.0
 	for i := 0; i < len(res); i++ {
 		res[i] = total
-		total += float64(n) / steps
+		total += float64(n) / float64(steps)
 	}
 	return res
 }
@@ -72,7 +72,7 @@ func fstep(n float64) []float64 {
 	total := 0.0
 	for i := 0; i < len(res); i++ {
 		res[i] = total
-		total += n / steps
+		total += n / float64(steps)
 	}
 	return res
 }
@@ -110,10 +110,8 @@ func main() {
 	c1 := plot.NewCoordinates(xaxis, a)
 	p := plot.NewPlot("algo runtimes")
 	c2 := plot.NewCoordinates(xaxis, b)
-	cxy := plot.NewCoordinates(xaxis, fstep(float64(a[len(a-1)])))
 	p.Add(c1, algoA)
 	p.Add(c2, algoB)
-	p.DrawYAxis(cxy)
 	p.AddLegend()
 	p.Output("graph.png")
 
