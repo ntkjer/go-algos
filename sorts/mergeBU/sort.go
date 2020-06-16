@@ -2,6 +2,7 @@ package merge
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 )
 
@@ -71,17 +72,13 @@ func (s Sorter) Show(input []interface{}) {
 func (s Sorter) Sort(input []interface{}) {
 	aux := make([]interface{}, len(input))
 	s.aux = aux
-	s.sort(input, 0, len(input)-1)
-}
-
-func (s Sorter) sort(input []interface{}, lo, hi int) {
-	if hi <= lo {
-		return
+	n := len(input)
+	for i := 1; i < n; i *= 2 {
+		for lo := 0; lo < n-i; lo += i + i {
+			bound := math.Min(float64(lo+i+i-1), float64(n-1))
+			s.merge(input, lo, lo+i-1, int(bound))
+		}
 	}
-	mid := lo + (hi-lo)/2
-	s.sort(input, lo, mid)
-	s.sort(input, mid+1, hi)
-	s.merge(input, lo, mid, hi)
 }
 
 func (s Sorter) merge(input []interface{}, lo, mid, hi int) {

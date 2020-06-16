@@ -1,4 +1,4 @@
-package merge
+package insertion
 
 import (
 	"fmt"
@@ -9,7 +9,6 @@ import (
 
 type Sorter struct {
 	items  []interface{}
-	aux    []interface{}
 	sorted bool
 }
 
@@ -69,44 +68,24 @@ func (s Sorter) Show(input []interface{}) {
 }
 
 func (s Sorter) Sort(input []interface{}) {
-	aux := make([]interface{}, len(input))
-	s.aux = aux
-	s.sort(input, 0, len(input)-1)
-}
-
-func (s Sorter) sort(input []interface{}, lo, hi int) {
-	if hi <= lo {
-		return
-	}
-	mid := lo + (hi-lo)/2
-	s.sort(input, lo, mid)
-	s.sort(input, mid+1, hi)
-	s.merge(input, lo, mid, hi)
-}
-
-func (s Sorter) merge(input []interface{}, lo, mid, hi int) {
-
-	i, j := lo, mid+1
-
-	for k := lo; k <= hi; k++ {
-		s.aux[k] = input[k]
-	}
-
-	for k := lo; k <= hi; k++ {
-		if i > mid {
-			input[k] = s.aux[j]
-			j += 1
-		} else if j > hi {
-			input[k] = s.aux[i]
-			i += 1
-		} else if s.Less(s.aux[j], s.aux[i]) {
-			input[k] = s.aux[j]
-			j += 1
-		} else {
-			input[k] = s.aux[i]
-			i += 1
+	n := len(input)
+	for i := 1; i < n; i++ {
+		lo, hi := 0, i
+		v := input[i]
+		for lo < hi {
+			mid := lo + (hi-lo)/2
+			if s.Less(v, input[mid]) {
+				hi = mid
+			} else {
+				lo = mid + 1
+			}
 		}
+		for j := i; j > lo; j-- {
+			input[j] = input[j-1]
+		}
+		input[lo] = v
 	}
+	s.sorted = true
 }
 
 func exchange(input []interface{}, i, j int) {
