@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/ntkjer/sedgewick/sorts/insertion"
+	"github.com/ntkjer/sedgewick/sorts/insertion-improved"
 	"github.com/ntkjer/sedgewick/sorts/merge"
 	"github.com/ntkjer/sedgewick/sorts/selection"
 	"github.com/ntkjer/sedgewick/sorts/shell"
@@ -34,6 +35,9 @@ func timeTrial(algo string, input []interface{}) float64 {
 		s.Sort(input)
 	} else if algo == "merge" {
 		var s *merge.Sorter = new(merge.Sorter)
+		s.Sort(input)
+	} else if algo == "bsinsertion" {
+		var s *bsinsertion.Sorter = new(bsinsertion.Sorter)
 		s.Sort(input)
 	} else {
 		panic("not supported yet! please add your sort implementation.")
