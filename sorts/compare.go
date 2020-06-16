@@ -10,6 +10,7 @@ import (
 	"github.com/ntkjer/sedgewick/sorts/insertion"
 	"github.com/ntkjer/sedgewick/sorts/insertion-improved"
 	"github.com/ntkjer/sedgewick/sorts/merge"
+	"github.com/ntkjer/sedgewick/sorts/mergeBU"
 	"github.com/ntkjer/sedgewick/sorts/selection"
 	"github.com/ntkjer/sedgewick/sorts/shell"
 
@@ -35,6 +36,9 @@ func timeTrial(algo string, input []interface{}) float64 {
 		s.Sort(input)
 	} else if algo == "merge" {
 		var s *merge.Sorter = new(merge.Sorter)
+		s.Sort(input)
+	} else if algo == "bumerge" {
+		var s *bumerge.Sorter = new(bumerge.Sorter)
 		s.Sort(input)
 	} else if algo == "bsinsertion" {
 		var s *bsinsertion.Sorter = new(bsinsertion.Sorter)
