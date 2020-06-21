@@ -27,7 +27,7 @@ func TestEnqeueThenDequeue(t *testing.T) {
 		t.Errorf("expected %d got %d \n.", len(testItems), q.Size())
 	}
 	fmt.Println(testItems)
-	fmt.Println(q.first.item)
+	fmt.Println(q.first.Item)
 	for i := 0; i < len(testItems) && !q.IsEmpty(); i++ {
 		got := q.Dequeue()
 		expected := testItems[i]

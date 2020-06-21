@@ -1,7 +1,7 @@
 package queue
 
 type node struct {
-	item interface{}
+	Item interface{}
 	next *node
 }
 
@@ -14,7 +14,7 @@ type Queue struct {
 func CopyQueue(toCopy *Queue) *Queue {
 	var q *Queue = new(Queue)
 	for x := toCopy.first; x != nil; x = x.next {
-		q.Enqueue(x.item)
+		q.Enqueue(x.Item)
 	}
 	return q
 }
@@ -27,11 +27,15 @@ func (q *Queue) Size() int {
 	return q.N
 }
 
+func (q *Queue) Peek() interface{} {
+	return q.first.Item
+}
+
 func (q *Queue) Enqueue(val interface{}) {
 	var last *node = new(node)
 	var oldlast *node = new(node)
 	oldlast = q.last
-	last.item = val
+	last.Item = val
 	last.next = nil
 	q.last = last
 	if q.IsEmpty() {
@@ -50,5 +54,5 @@ func (q *Queue) Dequeue() interface{} {
 		q.last = nil
 	}
 	q.N--
-	return oldfirst.item
+	return oldfirst.Item
 }

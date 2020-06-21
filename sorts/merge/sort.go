@@ -72,6 +72,7 @@ func (s Sorter) merge(input []interface{}, lo, mid, hi int) {
 	for k := lo; k <= hi; k++ {
 		s.aux[k] = input[k]
 	}
+	//s.aux = input
 
 	for k := lo; k <= hi; k++ {
 		if i > mid {

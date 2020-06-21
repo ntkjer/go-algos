@@ -2,12 +2,12 @@ package bumerge
 
 import (
 	"fmt"
+	"github.com/ntkjer/sedgewick/ds/queue"
 	"math"
 	"reflect"
 )
 
 //TODO: Generics and Comparable
-
 type Sorter struct {
 	items  []interface{}
 	aux    []interface{}
@@ -111,3 +111,14 @@ func exchange(input []interface{}, i, j int) {
 	input[i] = input[j]
 	input[j] = tmp
 }
+
+func (s Sorter) mergeSortedQueues(qA, qB *queue.Queue) *queue.Queue {
+	if qA.Size() != qB.Size() {
+		panic("mismatched input queue sizes")
+	}
+
+	if 
+}
+
+
+
