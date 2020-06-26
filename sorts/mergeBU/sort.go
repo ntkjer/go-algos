@@ -116,9 +116,5 @@ func (s Sorter) mergeSortedQueues(qA, qB *queue.Queue) *queue.Queue {
 	if qA.Size() != qB.Size() {
 		panic("mismatched input queue sizes")
 	}
-
-	if 
+	return nil
 }
-
-
-
