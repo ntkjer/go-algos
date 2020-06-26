@@ -39,41 +39,55 @@ func (s Sorter) Show(input []interface{}) {
 func (s Sorter) Sort(input []interface{}) {
 	aux := make([]interface{}, len(input))
 	s.aux = aux
-	s.naturalSort()
+	s.NaturalSort()
 }
 
-func (s Sorter) naturalSort() {
-	n := len(s.items)
-	if n <= 1 {
+func (s Sorter) NaturalSort() {
+	if len(s.items) <= 1 {
 		return
 	}
-
-	for i := 0; i < n; i *= 2 {
-		for lo := 0; lo < n-1; lo += i + 1 {
-			//bound := math.Min(float64((lo + i + i - 1)), float64((n - 1)))
-			stop1 := s.findSortedSequence(s.items, lo)
-			stop2 := s.findSortedSequence(s.items, stop1)
-			if stop1 == len(s.items)-1 || stop2 == len(s.items)-1 {
-				if stop1 == len(s.items)-1 {
-					s.merge(s.items, stop2, stop2+i-1, stop1)
-				} else {
-					s.merge(s.items, stop1, stop1+i-1, stop2)
-				}
+	offset := 0
+	for {
+		stop1 := s.findSortedSequence(offset)
+		if stop1 == len(s.items)-1 {
+			if offset == 0 {
+				return
+			} else {
+				offset = 0
+				continue
 			}
-			fmt.Println(stop1, stop2)
-			s.merge(s.items, stop1, lo+i-1, stop2)
+		}
+		stop2 := s.findSortedSequence(stop1 + 1)
+		s.merge(s.items, offset, stop1, stop2)
+		offset = stop2 + 1
+
+		if stop2 == len(s.items)-1 {
+			offset = 0
 		}
 	}
-
 }
 
-func (s Sorter) findSortedSequence(input []interface{}, pos int) int {
-	for i := pos + 1; i < len(input); i++ {
-		if s.Less(input[i-1], input[i]) {
-			return i - 1
-		}
+//fancy insertion sort?
+func (s Sorter) NaturalSort2() {
+	if len(s.items) <= 1 {
+		return
 	}
-	return len(input) - 1
+	start := 0
+	stop1 := s.findSortedSequence(start)
+	var stop2 int
+	for stop1 < len(s.items)-1 {
+		stop2 = s.findSortedSequence(stop1 + 1)
+
+		s.merge(s.items, start, stop1, stop2)
+		stop1 = stop2
+	}
+}
+
+func (s Sorter) findSortedSequence(pos int) int {
+	for pos < len(s.items)-1 && s.Less(s.items[pos], s.items[pos+1]) {
+		pos = pos + 1
+	}
+	return pos
 }
 
 func (s Sorter) merge(input []interface{}, lo, mid, hi int) {
