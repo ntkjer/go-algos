@@ -3,7 +3,6 @@ package nattymerge
 import (
 	"fmt"
 	"reflect"
-	"time"
 	//"github.com/ntkjer/sedgewick/sorts/insertion"
 )
 
@@ -43,69 +42,29 @@ func (s Sorter) Sort(input []interface{}) {
 	s.naturalSort()
 }
 
-func (s Sorter) naturalSorty(input []interface{}) {
-	lo, hi := 0, 0
-
-	mid := s.findSortedSequence(input, lo)
-	for {
-		fmt.Println(input)
-		time.Sleep(1 * time.Second)
-		//Find first sorted subsequence from current i
-		// Find second subsequence from
-
-		//merge them
-		lo = hi
-		mid = s.findSortedSequence(input, lo)
-		if lo == 0 && mid == len(input)-1 {
-			return
-		}
-		hi = s.findSortedSequence(input, mid)
-		if mid == hi && hi == len(input)-1 {
-			lo = 0
-			hi = 0
-			continue
-		}
-		s.merge(input, lo, mid, hi)
-
-		fmt.Println(lo, mid, hi)
-	}
-}
-
 func (s Sorter) naturalSort() {
-	if len(s.items) <= 1 {
+	n := len(s.items)
+	if n <= 1 {
 		return
 	}
 
-	offset := 0
-
-	for {
-		stop1 := s.findSortedSequence(s.items, offset)
-
-		if stop1 == len(s.items)-1 {
-
-			if offset == 0 {
-				// Sorting done.
-				return
-			} else {
-				// Current run is an orphan.
-				// Possibly handle it in the
-				// next merge pass.
-				offset = 0
-				continue
+	for i := 0; i < n; i *= 2 {
+		for lo := 0; lo < n-1; lo += i + 1 {
+			//bound := math.Min(float64((lo + i + i - 1)), float64((n - 1)))
+			stop1 := s.findSortedSequence(s.items, lo)
+			stop2 := s.findSortedSequence(s.items, stop1)
+			if stop1 == len(s.items)-1 || stop2 == len(s.items)-1 {
+				if stop1 == len(s.items)-1 {
+					s.merge(s.items, stop2, stop2+i-1, stop1)
+				} else {
+					s.merge(s.items, stop1, stop1+i-1, stop2)
+				}
 			}
-		}
-
-		stop2 := s.findSortedSequence(s.items, stop1+1)
-
-		s.merge(s.items, offset, stop1, stop2)
-		offset = stop2 + 1
-
-		if stop2 == len(s.items)-1 {
-			// Proceed to the next merge pass.
-			offset = 0
+			fmt.Println(stop1, stop2)
+			s.merge(s.items, stop1, lo+i-1, stop2)
 		}
 	}
-	s.sorted = true
+
 }
 
 func (s Sorter) findSortedSequence(input []interface{}, pos int) int {

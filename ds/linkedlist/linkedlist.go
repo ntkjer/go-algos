@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"reflect"
 	"strconv"
 )
 
@@ -75,14 +76,25 @@ func (l *LinkedList) Remove(key interface{}) {
 
 func Reverse(x *node) *node {
 	var first *node = x
-	var Reverse *node = nil
+	var reverse *node = nil
 	for first != nil {
 		second := first.next
-		first.next = Reverse
-		Reverse = first
+		first.next = reverse
+		reverse = first
 		first = second
 	}
-	return Reverse
+	return reverse
+}
+
+//Reverses a linked list and saves a bit more memory in the process.
+func ReversePointers(first **node) *node {
+	var result *node = nil
+	var current *node = *first
+
+	for current != nil {
+		MoveNode(&result, &current)
+	}
+	return result
 }
 
 func rReverse(first *node) *node {
@@ -97,7 +109,54 @@ func rReverse(first *node) *node {
 	return rest
 }
 
-func (l *LinkedList) max(x *node) int {
+//Assumest the linkedlist is in sorted order
+func (l *LinkedList) RemoveDuplicates(head *node) {
+	if head == nil {
+		return
+	}
+	for curr := head; curr != nil; curr = curr.next {
+		if curr.next != nil {
+			if !Less(curr.next.Item, curr.Item) {
+				curr.next = curr.next.next
+			}
+		}
+	}
+}
+
+func (l *LinkedList) IsSorted(head *node) bool {
+	for curr := head; curr != nil; curr = curr.next {
+		next := curr.next
+		if next == nil {
+			break
+		}
+		if Less(next.Item, curr) {
+			return false
+		}
+	}
+	return true
+}
+
+func (l *LinkedList) FrontBackSplit() (*LinkedList, *LinkedList) {
+	slow := l.first
+	fast := slow
+	var back *LinkedList = new(LinkedList)
+	var front *LinkedList = new(LinkedList)
+
+	for i := 0; i < l.Size(); i += 1 {
+		slow = slow.next
+		front.Append(slow)
+		bound := i + 3
+		for j := i; j < bound; j++ {
+			fast = fast.next
+			if j == bound-1 {
+				back.Append(fast.Item)
+			}
+		}
+	}
+	return front, back
+}
+
+func (l *LinkedList) Max(x *node) int {
 	max := -1
 	for ; x != nil; x = x.next {
 		tmp := x.Item.(int)
@@ -146,8 +205,6 @@ func (l *LinkedList) AddAfter(k int, item interface{}) {
 				x.next = curr.next
 				fmt.Println(curr.next.Item, x.next.Item, x.Item)
 				curr.next = x
-				fmt.Println("========================")
-				fmt.Println("success!")
 				l.N++
 				break
 			}
@@ -157,10 +214,264 @@ func (l *LinkedList) AddAfter(k int, item interface{}) {
 	}
 }
 
+// Takes the head of second list and adds it to onto the front of first list
+func MoveNode(sourceRef, destRef **node) {
+	var newNode *node = *sourceRef
+	if newNode == nil {
+		return
+	}
+	*sourceRef = newNode.next //Advance source pointer
+	newNode.next = *destRef
+	*destRef = newNode //point the ref to newNode instead
+}
+
+func AlternatingSplit(source *node, aRef, bRef **node) {
+	var aDummy node
+	var aTail *node = &aDummy
+	var bDummy node
+	var bTail *node = &bDummy
+	var current *node = source
+
+	aDummy.next = nil
+	bDummy.next = nil
+
+	for current != nil {
+		MoveNode(&(aTail.next), &current)
+		aTail = aTail.next
+		if current != nil {
+			MoveNode(&(bTail.next), &current)
+			bTail = bTail.next
+		}
+	}
+	*aRef = aDummy.next
+	*bRef = bDummy.next
+}
+
+func AlternatingSplit3(source *node, aRef, bRef **node) {
+	var a *node
+	var b *node
+
+	var current *node = source
+	for current != nil {
+		MoveNode(&a, &current)
+		if current != nil {
+			MoveNode(&b, &current)
+		}
+	}
+	*aRef = a
+	*bRef = b
+}
+
+//Takes a linked list and returns two sublists of alternating items
+func (l *LinkedList) AlternatingSplit2() (*LinkedList, *LinkedList) {
+	var firstHalf *LinkedList = new(LinkedList)
+	var secondHalf *LinkedList = new(LinkedList)
+
+	first := false
+	curr := l.first
+	for i := 0; i < l.Size(); i++ {
+		if first {
+			firstHalf.Append(curr.Item)
+		} else {
+			secondHalf.Append(curr.Item)
+		}
+		curr = curr.next
+		first = !first
+	}
+	return firstHalf, secondHalf
+}
+
+//Uses dummy nodes but also MoveNode for compactness
+func ShuffleMerge(a, b *node) *node {
+	var dummy node
+	var tail *node = &dummy
+	dummy.next = nil
+
+	for {
+		if a == nil {
+			tail.next = b
+			break
+		} else if b == nil {
+			tail.next = a
+			break
+		} else {
+			MoveNode(&(tail.next), &a)
+			tail = tail.next
+			MoveNode(&(tail.next), &b)
+			tail = tail.next
+		}
+	}
+	return dummy.next
+}
+
+func ShuffleMergeLonger(a, b *node) *node {
+	var dummy node
+	var tail *node = &dummy
+	dummy.next = nil
+
+	for {
+		if a == nil {
+			tail.next = b
+			break
+		} else if b == nil {
+			tail.next = a
+			break
+		} else {
+			tail.next = a
+			tail = a
+			a = a.next
+			tail.next = b
+			tail = b
+			b = b.next
+		}
+	}
+	return dummy.next
+}
+
+//Uses stack space proportional to size of list
+func ShuffleMergeRecursive(a, b *node) *node {
+	var result *node
+	var recur *node
+	if a == nil {
+		return b
+	} else if b == nil {
+		return a
+	} else {
+		recur = ShuffleMergeRecursive(a.next, b.next)
+		result = a
+		a.next = b
+		b.next = recur
+		return result
+	}
+}
+
+func SortedMergeRefs(a, b *node) *node {
+	var result *node = nil
+	var lastPtrRef **node = &result
+
+	for {
+		if a == nil {
+			*lastPtrRef = b
+			break
+		} else if b == nil {
+			*lastPtrRef = a
+		} else {
+			if Less(a.Item, b.Item) {
+				MoveNode(lastPtrRef, &a)
+			} else {
+				MoveNode(lastPtrRef, &b)
+			}
+			lastPtrRef = &((*lastPtrRef).next)
+		}
+	}
+	return result
+}
+
+func SortedMergeRecursive(a, b *node) *node {
+	var result *node = nil
+
+	if a == nil {
+		return b
+	} else if b == nil {
+		return a
+	}
+
+	if Less(a.Item, b.Item) {
+		result = a
+		result.next = SortedMergeRecursive(a.next, b)
+	} else {
+		result = b
+		result.next = SortedMergeRecursive(a, b.next)
+	}
+	return result
+}
+
+func SortedMerge(headA, headB *node) *LinkedList {
+	var result *node
+	last := &result
+	for {
+		if headA == nil {
+			*last = headB
+		} else if headB == nil {
+			*last = headA
+		}
+
+		if Less(headA.Item, headB.Item) {
+			MoveNode(last, &headA)
+		} else {
+			MoveNode(last, &headB)
+		}
+		last = &((*last).next)
+	}
+}
+
+func MergeSort(headRef **node) {
+	var head *node = *headRef
+	var a *node
+	var b *node
+
+	if (head == nil) || (head.next == nil) {
+		return
+	}
+	FrontBackSplit(head, &a, &b)
+}
+
+func Length(headRef *node) int {
+	count := 0
+	for curr := headRef; curr != nil; curr = curr.next {
+		count++
+	}
+	return count
+}
+
+func FrontBackSplit(source *node, front, back **node) {
+
+	length := Length(source)
+	var current *node = source
+
+	if length < 2 {
+		*front = source
+		*back = nil
+	} else {
+		hopCount := (length - 1) / 2
+		for i := 0; i < hopCount; i++ {
+			current = current.next
+		}
+
+		*front = source
+		*back = current.next
+		current.next = nil
+	}
+}
+
+func FrontBackSplitSlowFast(source *node, front, back **node) {
+	var fast *node
+	var slow *node
+	if source == nil || source.next == nil {
+		*front = source
+		*back = nil
+	} else {
+		slow = source
+		fast = source.next
+
+		for fast != nil {
+			fast = fast.next
+			if fast != nil {
+				slow = slow.next
+				fast = fast.next
+			}
+		}
+
+		*front = source
+		*back = slow.next
+		slow.next = nil
+
+	}
+}
+
 func (l *LinkedList) DeleteAfter(k int) bool {
 	var result bool
 	if k > l.Size() {
-		fmt.Println("k >>>>")
 		result = false
 	} else {
 		curr := l.first
@@ -193,7 +504,6 @@ func (l *LinkedList) DeleteFirst() interface{} {
 func dynamicCheck() bool {
 	var l *LinkedList = new(LinkedList)
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("LinkedList ok")
 	for scanner.Scan() {
 		item := scanner.Text()
 		if item == "" {
@@ -260,6 +570,32 @@ func initCheck() bool {
 			fmt.Printf("%v : <-----, items remaining: %d", s.DeleteFirst(), s.N)
 		}
 		i++
+	}
+	return true
+}
+
+func Less(x, y interface{}) bool {
+	if reflect.TypeOf(x) != reflect.TypeOf(y) {
+		panic("mismatched input type")
+	}
+	switch x.(type) {
+	case int:
+		a, b := x.(int), y.(int)
+		if a > b {
+			return false
+		}
+	case string:
+		a, b := x.(string), y.(string)
+		if a > b {
+			return false
+		}
+	case float64:
+		a, b := x.(float64), y.(float64)
+		if a > b {
+			return false
+		}
+	default:
+		panic("unhandled type")
 	}
 	return true
 }
