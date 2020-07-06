@@ -11,8 +11,14 @@ import (
 	"github.com/ntkjer/sedgewick/sorts/insertion-improved"
 	"github.com/ntkjer/sedgewick/sorts/merge"
 	"github.com/ntkjer/sedgewick/sorts/mergeBU"
+	"github.com/ntkjer/sedgewick/sorts/natural-mergesort"
 	"github.com/ntkjer/sedgewick/sorts/selection"
 	"github.com/ntkjer/sedgewick/sorts/shell"
+
+	"github.com/ntkjer/sedgewick/sorts/heapsortC"
+	"github.com/ntkjer/sedgewick/sorts/quicksort"
+	"github.com/ntkjer/sedgewick/sorts/quicksort-sentinels"
+	"github.com/ntkjer/sedgewick/sorts/quicksort3way"
 
 	"github.com/ntkjer/sedgewick/utils/chart"
 	"github.com/ntkjer/sedgewick/utils/stopwatch"
@@ -42,6 +48,21 @@ func timeTrial(algo string, input []interface{}) float64 {
 		s.Sort(input)
 	} else if algo == "bsinsertion" {
 		var s *bsinsertion.Sorter = new(bsinsertion.Sorter)
+		s.Sort(input)
+	} else if algo == "natural-merge" {
+		var s *nattymerge.Sorter = new(nattymerge.Sorter)
+		s.Sort(input)
+	} else if algo == "quick" {
+		var s *quicksort.Sorter = new(quicksort.Sorter)
+		s.Sort(input)
+	} else if algo == "quick3" {
+		var s *quicksort3way.Sorter = new(quicksort3way.Sorter)
+		s.Sort(input)
+	} else if algo == "quick-ns" {
+		var s *quicksortns.Sorter = new(quicksortns.Sorter)
+		s.Sort(input)
+	} else if algo == "heapsort" {
+		var s *heapsort.Sorter = new(heapsort.Sorter)
 		s.Sort(input)
 	} else {
 		panic("not supported yet! please add your sort implementation.")
